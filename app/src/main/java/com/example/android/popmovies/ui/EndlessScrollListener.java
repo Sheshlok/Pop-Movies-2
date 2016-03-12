@@ -1,4 +1,4 @@
-package com.example.android.popmovies;
+package com.example.android.popmovies.ui;
 
 import android.view.View;
 import android.view.ViewGroup;

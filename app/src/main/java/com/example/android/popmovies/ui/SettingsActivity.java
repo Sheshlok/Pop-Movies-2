@@ -1,10 +1,12 @@
-package com.example.android.popmovies;
+package com.example.android.popmovies.ui;
 
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+
+import com.example.android.popmovies.R;
 
 /**
  * Created by sheshloksamal on 7/11/15.

@@ -1,4 +1,4 @@
-package com.example.android.popmovies;
+package com.example.android.popmovies.Utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

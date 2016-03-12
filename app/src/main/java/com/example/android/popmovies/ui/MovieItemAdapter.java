@@ -1,4 +1,4 @@
-package com.example.android.popmovies;
+package com.example.android.popmovies.ui;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.popmovies.MovieItem;
+import com.example.android.popmovies.R;
 
 import java.util.List;
 

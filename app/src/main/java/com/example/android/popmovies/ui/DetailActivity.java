@@ -1,4 +1,4 @@
-package com.example.android.popmovies;
+package com.example.android.popmovies.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.android.popmovies.R;
+import com.example.android.popmovies.SettingsActivity;
+import com.example.android.popmovies.ui.DetailActivityFragment;
 
 public class DetailActivity extends AppCompatActivity {
 
