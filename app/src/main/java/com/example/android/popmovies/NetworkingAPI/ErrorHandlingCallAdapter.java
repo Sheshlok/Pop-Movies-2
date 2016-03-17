@@ -1,4 +1,9 @@
-package com.example.android.popmovies.Networking;
+package com.example.android.popmovies.NetworkingAPI;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -19,11 +24,13 @@ import retrofit2.Retrofit;
  */
 public class ErrorHandlingCallAdapter {
 
+    private static final String LOG_TAG = ErrorHandlingCallAdapter.class.getSimpleName();
+
     /**
      * A callback which offers granular callbacks for various conditions.
      */
 
-    interface MyCallback<T> {
+    public interface MyCallback<T> {
 
         /**
          * Called for [200, 300) responses.
@@ -57,7 +64,7 @@ public class ErrorHandlingCallAdapter {
 
     }
 
-    interface MyCall<T> {
+    public interface MyCall<T> {
 
         void cancel();
 
@@ -67,8 +74,22 @@ public class ErrorHandlingCallAdapter {
 
         MyResponse<T> execute();
 
+        boolean isCanceled();
+
+        boolean isExecuted();
+
     }
 
+    public static class MainThreadExecutor implements Executor {
+
+        private final Handler handler = new Handler(Looper.getMainLooper());
+
+        @Override
+        public void execute(@NonNull Runnable r) {
+            handler.post(r);
+        }
+
+    }
     public static class MyResponse<T> {
 
         public static <T> MyResponse<T> exception(Exception exception) {
@@ -156,35 +177,54 @@ public class ErrorHandlingCallAdapter {
         public void enqueue(final MyCallback<T> callback) {
             call.enqueue(new Callback<T>() {
                 @Override
-                public void onResponse(Call<T> call, Response<T> response) {
-
-                    int code = response.code();
-                    if (code >= 200 && code < 300) {
-                        callback.success(response);
-                    } else if (code == 401) {
-                        callback.unauthenticated(response);
-                    } else if (code >= 400 && code < 500) {
-                        callback.clientError(response);
-                    } else if (code >= 500 && code < 600) {
-                        callback.serverError(response);
-                    } else {
-                        callback.unExpectedError(new RuntimeException("Unexpected Response" + response));
+                public void onResponse(Call<T> call, final Response<T> response) {
+                    Log.e(LOG_TAG, Thread.currentThread().toString());
+                    /*
+                        For asynchronous calls, such as this, the thread is provided by OkHttp's
+                        dispatcher. That's why we have to get back the main thread. For all other
+                        calls the thread is main.
+                     */
+                    if (callbackExecutor != null) {
+                        callbackExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                int code = response.code();
+                                if (code >= 200 && code < 300) {
+                                    callback.success(response);
+                                } else if (code == 401) {
+                                    callback.unauthenticated(response);
+                                } else if (code >= 400 && code < 500) {
+                                    callback.clientError(response);
+                                } else if (code >= 500 && code < 600) {
+                                    callback.serverError(response);
+                                } else {
+                                    callback.unExpectedError(new RuntimeException("Unexpected Response" + response));
+                                }
+                            }
+                        });
                     }
                 }
 
                 @Override
-                public void onFailure(Call<T> call, Throwable t) {
+                public void onFailure(Call<T> call, final Throwable t) {
 
-                    if (t instanceof IOException) {
-                        callback.networkError((IOException) t);
-                    } else {
-                        callback.unExpectedError(t);
+                    if (callbackExecutor != null) {
+                        callbackExecutor.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (t instanceof IOException) {
+                                    callback.networkError((IOException) t);
+                                } else {
+                                    callback.unExpectedError(t);
+                                }
+                            }
+                        });
                     }
-
                 }
             });
         }
 
+        @SuppressWarnings("CloneDoesntCallSuperClone") //Performing deep clone
         @Override
         public MyCall<T> clone() {
             return new MyCallAdapter<>(call.clone(), callbackExecutor);
@@ -197,6 +237,14 @@ public class ErrorHandlingCallAdapter {
             } catch (IOException e) {
                 return MyResponse.exception(e);
             }
+        }
+
+        @Override public boolean isCanceled(){
+            return call.isCanceled();
+        }
+
+        @Override public boolean isExecuted(){
+            return call.isExecuted();
         }
     }
 
