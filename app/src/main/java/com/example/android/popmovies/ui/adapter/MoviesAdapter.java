@@ -1,93 +1,193 @@
 package com.example.android.popmovies.ui.adapter;
 
+import android.animation.AnimatorInflater;
 import android.content.Context;
-import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
+import android.graphics.PorterDuff;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
+import android.support.v7.graphics.Palette;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.android.popmovies.R;
-import com.example.android.popmovies.data.provider.MovieContract;
+import com.example.android.popmovies.data.model.MovieItem;
+import com.example.android.popmovies.utilities.Lists;
+import com.github.florent37.glidepalette.GlidePalette;
 
-import butterknife.Bind;
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by sheshloksamal on 6/11/15.
- * {@link MoviesAdapter} exposes a list of movies from a {@link android.database.Cursor} to a
- * {@link android.widget.GridView}
+ *
  */
 
-public class MoviesAdapter extends CursorAdapter {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieHolder> {
 
-    /**
-     * When we use this constructor, we set c = null, and flags = 0, which means no cursor to
-     * draw data from and no auto-requery. Cursor is given in the LoaderManager.LoaderCallback
-     * implementation and the auto-requery is enabled through content observers registered in
-     * the ContentProvider 'query' function.
-     * @param context   The context.
-     * @param c         The cursor from which to get the data.
-     * @param flags     If true, the adapter will call requery() on the cursor, whenever it
-     *                  changes so the most recent data is always displayed. Using true here is
-     *                  discouraged.
-     */
-    public MoviesAdapter(Context context, Cursor c, int flags){
-        super(context, c, flags);
+    public interface OnMovieClickListener{
+        void onContentClicked(@NonNull MovieItem movieitem, int position);
+        void onFavoredClicked(@NonNull MovieItem movieItem, int position);
     }
 
-    final class ViewHolder{
-        @Bind(R.id.movie_item_poster) ImageView posterView;
+    @NonNull private final Context mContext;
+    @NonNull private final LayoutInflater mInflater;
+    @NonNull private List<MovieItem> mMovies;
+    @NonNull private OnMovieClickListener mOnMovieClickListener;
 
-        public ViewHolder(View view) {
+    public void setOnMovieClickListener(@NonNull OnMovieClickListener onMovieClickListener) {
+        this.mOnMovieClickListener = onMovieClickListener;
+    }
+
+    public MoviesAdapter(@NonNull Context context, List<MovieItem> movies) {
+        mContext = context;
+        mInflater = LayoutInflater.from(context);
+        mMovies = (movies != null) ? movies : new ArrayList<>();
+
+        // Each item in the data set has a unique identifier, namely the movieId
+        setHasStableIds(true);
+    }
+
+    @Override
+    public MovieHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        //Timber.d("in onCreateViewHolder");
+        return new MovieHolder(mInflater.inflate(R.layout.item_movie, parent, false));
+    }
+
+    @Override
+    public void onBindViewHolder(MovieHolder holder, int position) {
+        //Timber.d("in onBindViewHolder");
+        // holder.bind(mMovies.get(position));
+        holder.bind(this.getItem(position));
+
+    }
+
+    class MovieHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.movie_item_container) View mMovieItemContainer;
+        @BindView(R.id.movie_item_poster) ImageView mImageView;
+        @BindView(R.id.movie_item_footer) ViewGroup mFooterView;
+        @BindView(R.id.movie_item_title) TextView mTitleView;
+        @BindView(R.id.movie_item_genres) TextView mGenresView;
+        @BindView(R.id.movie_item_button_favorite) ImageButton mFavoriteButton;
+
+        public MovieHolder(View view) {
+            super(view);
             ButterKnife.bind(this, view);
+        }
+
+        public void bind(@NonNull MovieItem movieItem) {
+
+            mMovieItemContainer.setOnClickListener(view ->
+                    mOnMovieClickListener.onContentClicked(movieItem, getAdapterPosition()));
+
+            mTitleView.setText(movieItem.getTitle());
+
+            if (!Lists.isEmpty(movieItem.getGenreNames())) {
+                mGenresView.setText(TextUtils.join(",", movieItem.getGenreNames()));
+            } else {
+                mGenresView.setText("");
+            }
+
+            //noinspection unchecked
+            Glide.with(mContext)
+                    .load(movieItem.getPosterPath())
+                    .crossFade()
+                    .placeholder(R.color.cardview_light_background)
+                    .listener(GlidePalette.with(movieItem.getPosterPath())
+                            .intoCallBack(palette -> applyColors(palette.getVibrantSwatch())))
+                    .into(mImageView);
+
+
+            // FavoriteButton
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mFavoriteButton.setStateListAnimator(
+                        AnimatorInflater.loadStateListAnimator(mContext, R.animator.favorite_button_raised));
+            }
+
+            ViewCompat.setElevation(mFavoriteButton, R.dimen.favorite_button_elevation);
+
+            mFavoriteButton.setSelected(movieItem.isFavored());
+
+            mFavoriteButton.setOnClickListener(view -> {
+                mFavoriteButton.setSelected(!movieItem.isFavored());
+                mOnMovieClickListener.onFavoredClicked(movieItem, getAdapterPosition());
+            });
+
+        }
+
+        private void applyColors(Palette.Swatch swatch) {
+            if (swatch != null) {
+                mFooterView.setBackgroundColor(swatch.getRgb());
+                mTitleView.setTextColor(swatch.getTitleTextColor());
+                mGenresView.setTextColor(swatch.getBodyTextColor());
+                mFavoriteButton.setColorFilter(swatch.getBodyTextColor(), PorterDuff.Mode.MULTIPLY);
+            }
+        }
+
+    }
+
+    /*----------------------- Helper functions to add or remove items in the list---------------- */
+
+    public void clear() {
+        if (!mMovies.isEmpty()) {
+            mMovies.clear();
+            /*
+                Structural Change hence notifyDataSetChanged. RecyclerView will synthesize visible
+                structural change events for ths adapter since it reports it has stable IDs when
+                this method is used. This can help for the purposes of animation and visual object
+                persistence but individual items will still need to be relaid and rebound.
+            */
+            notifyDataSetChanged();
+        }
+    }
+    public void set(@NonNull List<MovieItem> movies) {
+        mMovies = movies;
+        // A complete structural change
+        notifyDataSetChanged();
+    }
+
+    public void add(@NonNull List<MovieItem> newMovies) {
+        if (!newMovies.isEmpty()){
+            int currentSize = mMovies.size();
+            int amountInserted = newMovies.size();
+
+            mMovies.addAll(newMovies);
+            /* Can use the more efficient specific change event here */
+            notifyItemRangeInserted(currentSize, amountInserted);
+            Timber.e("Size of moviesList: %d", mMovies.size());
         }
     }
 
-    /**
-     * These Views are reused as needed as Adapters work with AbsListView(ListView, GridView etc.)
-     * to populate them.
-     * @param context    The context
-     * @param cursor     The cursor passed in from the CursorLoader
-     * @param parent     the parent of this view
-     * @return View
-     */
+    /* ------------Getter functions for itemCount, item(s), itemId -------------------------------*/
+
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent){
-        int layoutId = R.layout.item_movie;
-        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
-
-        // After we have inflated the view we set a ViewHolder tag on that view
-        ViewHolder viewHolder = new ViewHolder(view);
-        view.setTag(viewHolder);
-
-        return view;
+    public int getItemCount() {
+        return mMovies.size();
     }
 
-    /**
-     * This is where we fill in the views with the contents from the cursor. Here, we are binding
-     * the values in the cursor to the view.
-     * @param view          View passed from newView(...)
-     * @param context       The context
-     * @param cursor        The cursor passed in from the CursorLoader
-     */
+    @NonNull public List<MovieItem> getItems() {
+        return mMovies;
+    }
 
+    /* This gets called in onBindViewHolder to set (unique) itemIds */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public long getItemId(int position) {
+        return Long.parseLong(mMovies.get(position).getMovieId());
+    }
 
-        // Get back the ViewHolder object. Now, we immediately have references to all the views
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-
-        String moviePosterPath = cursor.getString
-                (cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH));
-
-        Glide.with(context)
-                .load(moviePosterPath)
-                .placeholder(R.color.cardview_light_background)
-                .crossFade()
-                .into(viewHolder.posterView);
+    public MovieItem getItem(int position) {
+        return mMovies.get(position);
     }
 
 }

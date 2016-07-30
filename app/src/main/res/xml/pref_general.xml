@@ -4,10 +4,53 @@
     android:layout_height="match_parent"
 
     <ListPreference
-        android:key="@string/pref_sort_by_key"
-        android:title="@string/pref_sort_by_label"
         android:defaultValue="@string/pref_sort_by_default"
         android:entries="@array/pref_sort_by_entries"
-        android:entryValues="@array/pref_sort_by_values" />
+        android:entryValues="@array/pref_sort_by_values"
+        android:key="@string/pref_sort_by_key"
+        android:title="@string/pref_sort_by_label" />
+
+
+    <PreferenceCategory android:title="@string/pref_notifications_category">
+
+        <CheckBoxPreference
+            android:defaultValue="@string/pref_enable_notifications_default"
+            android:key="@string/pref_enable_notifications_key"
+            android:summaryOff="@string/pref_enable_notifications_false"
+            android:summaryOn="@string/pref_enable_notifications_true"
+            android:title="@string/pref_enable_notifications_label" />
+
+        <RingtonePreference
+            android:defaultValue="@string/pref_notification_ringtone_default"
+            android:dependency="@string/pref_enable_notifications_key"
+            android:key="@string/pref_notification_ringtone_key"
+            android:ringtoneType="notification"
+            android:title="@string/pref_notification_ringtone_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="@string/pref_enable_notifications_key"
+            android:key="@string/pref_notification_vibrate_key"
+            android:title="@string/pref_notification_vibrate_title" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_data_and_sync_category">
+
+        <ListPreference
+            android:defaultValue="@string/pref_sync_frequency_default"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:key="@string/pref_sync_frequency_key"
+            android:title="@string/pref_sync_frequency_title" />
+        <!-- Use this UI sparingly as per design guidelines. This simply launches an intent
+        when selected -->
+        <Preference
+            android:title="@string/pref_system_sync_settings_title">
+            <intent android:action="android.settings.SYNC_SETTINGS"/>
+        </Preference>
+
+    </PreferenceCategory>
+
 
 </PreferenceScreen>

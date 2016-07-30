@@ -1,17 +1,58 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+
+    <!-- MovieItem Style -->
+    <style name="MovieItem" parent="CardView">
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">10dp</item>
+        <item name="cardPreventCornerOverlap">false</item>
     </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- MovieItem Text Style -->
+    <style name="MovieItemText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:lines">1</item>
+        <item name="android:textColor">@color/textAndIcons</item>
+    </style>
+
+    <!-- FavoriteButton Style -->
+    <style name="FavoriteButton" parent="Widget.AppCompat.Light.ActionButton">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:src">@drawable/selector_favorite_button</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <!--Toolbar-->
+    <style name="ActionBar.ThemeOverlay" parent="">
+        <item name="android:textColorPrimary">@color/textAndIcons</item>
+        <item name="colorControlNormal">@color/textAndIcons</item>
+        <item name="colorControlHighlight">@color/textAndIcons</item>
+    </style>
+
+    <style name="ActionBar.TitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/textAndIcons</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ActionBar.SubTitle" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">@color/textAndIcons</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 
 </resources>

@@ -13,14 +13,15 @@ import com.example.android.popmovies.R;
  * Jake Wharton's gist - https://gist.gisthub.com/JakeWharton/2856179 - with some modification
  */
 
-/* Maintains an aspect ratio based on either width or height. Disabled by default */
+/* Maintains a custom fixed aspect ratio for faster loading by Glide. Disabled by default */
 
 public final class FixedAspectRatioImageView extends ImageView {
 
-    // These must be kept in sync with the sync with the AspectRatioImageView attributes in
+    // These must be kept in sync with the AspectRatioImageView attributes in
     // attrs.xml
 
     private static final float DEFAULT_ASPECT_RATIO = 0f;
+    private static final boolean DEFAULT_ASPECT_RATIO_ENABLED = false;
 
     private float aspectRatio;
     private boolean aspectRatioEnabled;
@@ -41,12 +42,13 @@ public final class FixedAspectRatioImageView extends ImageView {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FixedAspectRatioImageView);
         aspectRatio = a.getFloat(R.styleable.FixedAspectRatioImageView_aspectRatio, DEFAULT_ASPECT_RATIO);
+        aspectRatioEnabled = a.getBoolean(R.styleable.FixedAspectRatioImageView_aspectRatioEnabled, DEFAULT_ASPECT_RATIO_ENABLED);
 
         a.recycle();
     }
 
     /*
-        Now override onMeasure and set dimensions. onMeasure is called is called when the parent
+        Now override onMeasure and set dimensions. onMeasure is called  when the parent
         is laying out its children. When a view's onMeasure is called by its parent layout, it
         asks how much space is needed and passes in how much space is available and whether the
         view will be given EXACTLY that much space or AT_MOST that much space using the params
@@ -64,6 +66,7 @@ public final class FixedAspectRatioImageView extends ImageView {
             int newWidth = MeasureSpec.getSize(wMeasureSpec) - hPadding;
             int newHeight = MeasureSpec.getSize(hMeasureSpec) - vPadding;
 
+            // If width is greater than height * AR, resize width else resize height.
             if (newHeight > 0 && (newWidth > newHeight * aspectRatio)) {
                 newWidth = (int) (newHeight * aspectRatio + 0.5);
             } else {
@@ -98,6 +101,7 @@ public final class FixedAspectRatioImageView extends ImageView {
     /** Sets whether or not forcing the aspect-ratio is enabled. This will re-layout the view. */
     public void setAspectRatioEnabled(boolean aspectRatioEnabled){
         this.aspectRatioEnabled = aspectRatioEnabled;
+        requestLayout();
     }
 
 }

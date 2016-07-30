@@ -1,4 +1,4 @@
-package com.example.android.popmovies.Utilities;
+package com.example.android.popmovies.utilities;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -19,8 +19,6 @@ public class Connectivity {
 
     /**
      * Get the network info
-     * @param context
-     * @return
      */
 
     public static NetworkInfo getNetworkInfo(Context context) {
@@ -30,8 +28,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity
-     * @param context
-     * @return
      */
     public static boolean isConnected(Context context) {
         NetworkInfo networkInfo = Connectivity.getNetworkInfo(context);
@@ -40,8 +36,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity to Wifi network
-     * @param context
-     * @return
      */
 
     public static boolean isConnectedWifi(Context context) {
@@ -52,8 +46,6 @@ public class Connectivity {
 
     /**
      * Check if there is any connectivity to mobile network
-     * @param context
-     * @return
      */
 
     public static boolean isConnectedMobile(Context context) {
@@ -64,8 +56,6 @@ public class Connectivity {
 
     /**
      * Check if there is Fast Connectivity
-     * @param context
-     * @return
      */
     public static boolean isConnectedFast(Context context) {
         NetworkInfo networkInfo = Connectivity.getNetworkInfo(context);
@@ -75,9 +65,8 @@ public class Connectivity {
 
     /**
      * Check if the connection is fast
-     * @param type
-     * @param subType
-     * @return
+     * @param type    Type of connection, i.e. Wifi/Mobile etc.
+     * @param subType subType of connection, for e.g. in case of Mobile, 3G/GPRS/4G etc.
      */
     public static boolean isConnectionFast(int type, int subType) {
         if(type == ConnectivityManager.TYPE_WIFI) {

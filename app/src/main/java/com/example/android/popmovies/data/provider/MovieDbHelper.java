@@ -5,9 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
-import com.example.android.popmovies.data.provider.MovieContract.MovieEntry;
-import com.example.android.popmovies.data.provider.MovieContract.ReviewEntry;
-import com.example.android.popmovies.data.provider.MovieContract.TrailerEntry;
+
 
 /**
  * Created by sheshloksamal on 12/03/16.
@@ -15,25 +13,33 @@ import com.example.android.popmovies.data.provider.MovieContract.TrailerEntry;
  */
 public class MovieDbHelper extends SQLiteOpenHelper {
 
-    private static final String LOG_TAG = MovieDbHelper.class.getSimpleName();
-
     /*
-        If you change the database schema, you must update the DB version. We will start at
-        DATABASE_VERSION 1. This must be manually incremented each time we release an updated
-        APK with new database schema
+        1. If you change the database schema, you must update the DB version. We will start at
+         DATABASE_VERSION 1. This must be manually incremented each time we release an updated
+         APK with new database schema.
+        2. 30th Mar: Updating dbVersion due to a) updated schema for movies table, b) insertion of
+         genres tables, and c) a complete overhaul of project as per reactive programming
+         paradigms.
      */
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
-    static final String DATABASE_NAME = "movies.db";
+    public static final String DATABASE_NAME = "movies.db";
 
     public MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     /*
+       /-------------------------------------------------------------------------------------------/
+       30th Mar: This was used before when we had an earlier schema, i.e. ReviewEntry and
+       TrailerEntry tables with movie_id as the FK. Since we no longer fetch Reviews and Trailers
+       at start but only when a certain movieItem is clicked (and store all the retrieved ones in
+       the custom cache of the OkHttpClient, we need 2 independent tables. Nevertheless, lets leave
+       this one as it is as it does not impact the database anyhow.
+       /-------------------------------------------------------------------------------------------/
        By default, foreign key constraints are not enforced by database. This method
        allows the application to enforce foreign key constraints. It must be called each time the
-       database is open to ensure that foreign key constraints are enabled for the session.
+       database is opened to ensure that foreign key constraints are enabled for the session.
        When foreign key constraints are disabled the database does not check whether changes to
        database will violate foreign key constraints. As a result, it is possible for the
        database state to become inconsistent.
@@ -54,47 +60,32 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         by design */
 
         /** MOVIE_ID column should be unique */
-        final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.TABLE_NAME +
-                " ( " +
-                MovieEntry._ID + " INTEGER PRIMARY KEY, " +
-                MovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_POSTER_PATH + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_MOVIE_USER_RATING + " TEXT NOT NULL, " +
-                "UNIQUE (" + MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE );";
+        final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieContract.MovieEntry.TABLE_NAME
+                + "("
+                + MovieContract.MovieEntry._ID + " INTEGER PRIMARY KEY, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_ID + " TEXT NOT NULL, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_TITLE + " TEXT NOT NULL, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH + " TEXT, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH + " TEXT, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS + " TEXT, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_USER_RATING + " TEXT, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE + " TEXT, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_FAVORED + " INTEGER NOT NULL DEFAULT 0, "
+                + MovieContract.MovieEntry.COLUMN_MOVIE_GENRE_IDS + " TEXT, "
+                + "UNIQUE (" + MovieContract.MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE"
+                + ");";
 
-        /** REVIEW_ID column should be unique */
-        final String SQL_CREATE_REVIEW_TABLE = "CREATE TABLE " + ReviewEntry.TABLE_NAME +
-                " ( " +
-                ReviewEntry._ID + " INTEGER PRIMARY KEY, " +
-                ReviewEntry.COLUMN_REVIEW_ID + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_REVIEW_AUTHOR + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_REVIEW_CONTENT + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_REVIEW_URL + " TEXT NOT NULL, " +
-                ReviewEntry.COLUMN_MOVIE_KEY + " TEXT NOT NULL, " +
-                "FOREIGN KEY (" + ReviewEntry.COLUMN_MOVIE_KEY + ") REFERENCES " +
-                MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID +
-                "), " + "UNIQUE (" + ReviewEntry.COLUMN_REVIEW_ID + ") ON CONFLICT REPLACE );";
-
-        /** TRAILER_ID column should be unique */
-        final String SQL_CREATE_TRAILER_TABLE = "CREATE TABLE " + TrailerEntry.TABLE_NAME +
-                " ( " +
-                TrailerEntry._ID + " INTEGER PRIMARY KEY, " +
-                TrailerEntry.COLUMN_TRAILER_ID + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_TRAILER_KEY + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_TRAILER_NAME + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_TRAILER_SITE + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_TRAILER_SIZE + " TEXT NOT NULL, " +
-                TrailerEntry.COLUMN_MOVIE_KEY + " TEXT NOT NULL, " +
-                "FOREIGN KEY (" + TrailerEntry.COLUMN_MOVIE_KEY + ") REFERENCES " +
-                MovieEntry.TABLE_NAME + "(" + MovieEntry.COLUMN_MOVIE_ID +
-                "), UNIQUE (" + TrailerEntry.COLUMN_TRAILER_ID + ") ON CONFLICT REPLACE );";
+        /** GENRE_ID column should be unique */
+        final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " + MovieContract.GenreEntry.TABLE_NAME
+                + "("
+                + MovieContract.GenreEntry._ID + " INTEGER PRIMARY KEY, "
+                + MovieContract.GenreEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, "
+                + MovieContract.GenreEntry.COLUMN_GENRE_NAME + " TEXT NOT NULL, "
+                + "UNIQUE (" + MovieContract.GenreEntry.COLUMN_GENRE_ID + ") ON CONFLICT REPLACE"
+                + ");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_REVIEW_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_TRAILER_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
     }
 
     @Override
@@ -109,9 +100,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
             If you want to modify the schema without wiping data (in case where data contains
             user-generated information), use 'ALTER TABLE' to add new tables
          */
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + ReviewEntry.TABLE_NAME);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TrailerEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.MovieEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieContract.GenreEntry.TABLE_NAME);
 
     }
 }

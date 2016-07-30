@@ -1,27 +1,97 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
     <string name="app_name">Pop Movies</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_detail">Movie Details</string>
+    <string name="action_share">Share</string>
+    <string name="title_share_trailer">Share trailer</string>
+    <string name="movie_item_button_desc">Save to favorites !!!</string>
+    <string name="movie_item_poster_desc">Movie poster</string>
+    <string name="share_movie_template">Check out \'<xliff:g id="movieTitle">%1s</xliff:g>\' at <xliff:g id="trailerUrl">%2s</xliff:g></string>
+    <string name="movie_details_play_main_trailer">Play trailer</string>
 
+    <string name="title_activity_detail">Movie Details</string>
+    <!-- Menu label for refreshing movie list -->
+    <string name="action_refresh" translatable="false">Refresh</string>
 
     <string name="title_activity_settings">Settings</string>
-    <!-- Key name for storing 'Sort By' key in SharedPreferences [CHAR LIMIT=NONE] -->
+
+
+    <!-- Content Provider -->
+    <string name="content_authority">com.example.android.popmovies</string>
+    <string name="pref_last_DB_insert">last DBInsert</string>
+
+    <!-- Placeholders -->
+    <string name="placeholder_lorem_ipsum">Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc,</string>
+    <string name="placeholder_movie_synopsis">Following the events of Age of Ultron, the collective governments of the world pass an act designed to regulate all superhuman activity. This polarizes opinion amongst the Avengers, causing two factions to side with Iron Man or Captain America, which causes an epic battle between former allies.</string>
+
+    <!-- Sync Adapter related -->
+    <string name="sync_account_type">popMovies.example.com</string>
+
+    <!-- ===================================Preferences======================================== -->
+    <!-- Sort By preference -->
     <string name="pref_sort_by_key" translatable="false">sortKey</string>
-
-    <!-- Label for the sort order preference [CHAR LIMIT = 20] -->
     <string name="pref_sort_by_label">Sort By</string>
-
-    <!-- Default sort order preference [CHAR LIMIT = 20] -->
     <string name="pref_sort_by_default">popularity.desc</string>
-
     <string-array name="pref_sort_by_entries">
         <item>Most Popular</item>
         <item>Highest Rated</item>
+        <item>Favorite Movies</item>
     </string-array>
-
     <string-array name="pref_sort_by_values">
         <item>popularity.desc</item>
         <item>vote_average.desc</item>
+        <item>favorites</item>
     </string-array>
+
+    <!-- Notifications category -->
+    <string name="pref_notifications_category">NOTIFICATIONS</string>
+    <!-- Strings related to notification preference -->
+    <string name="pref_last_notification">last_notification</string>
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_notifications_label">Movie Notifications</string>
+    <string name="pref_enable_notifications_default" translatable="false">false</string>
+    <string name="pref_enable_notifications_false">Not Enabled</string>
+    <string name="pref_enable_notifications_true">Enabled</string>
+    
+    <!-- Strings related to notification ringtone -->
+    <string name="pref_notification_ringtone_key" translatable="false">notifications_ringtone</string>
+    <string name="pref_notification_ringtone_title">Ringtone</string>
+    <string name="pref_notification_ringtone_default">content://settings/system/notification_sound</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <!-- Strings related to notification vibrate -->
+    <string name="pref_notification_vibrate_key" translatable="false">notifications_vibrate</string>
+    <string name="pref_notification_vibrate_title">Vibrate</string>
+
+    <!-- Data and Sync category -->
+    <string name="pref_data_and_sync_category">DATA &amp; SYNC</string>
+    <string name="pref_sync_frequency_default">180</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>30 min</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>Once A Day!</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+        <item>-1</item>
+    </string-array>
+    <string name="pref_sync_frequency_key" translatable="false">sync_frequency</string>
+    <string name="pref_sync_frequency_title">Sync Frequency</string>
+
+    <string name="pref_system_sync_settings_title">System Sync Settings</string>
+    <!-- ===================================Preferences======================================== -->
+
+    <string name="format_notification_short">Today \'s Top 20 <xliff:g id="sortPreference">%1$s</xliff:g> movies!!</string>
+    <string name="format_notification_long">
+        Top 20 <xliff:g id="sortPreference">%1$s</xliff:g> movies are: <xliff:g id="movieNumberedList">%2$s</xliff:g>
+    </string>
 
 </resources>

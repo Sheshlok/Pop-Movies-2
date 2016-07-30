@@ -2,66 +2,71 @@ package com.example.android.popmovies.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
 import com.example.android.popmovies.R;
-import com.example.android.popmovies.ui.fragment.DetailActivityFragment;
+import com.example.android.popmovies.ui.fragment.MovieDetailsFragment;
 
-public class MovieDetailsActivity extends AppCompatActivity {
+import timber.log.Timber;
+
+public class MovieDetailsActivity extends BaseActivity {
+
+    public static final String MOVIE_ITEM = "movie_item";
+    private static final String MOVIE_DETAILS_FRAGMENT_TAG = "fragment_movie_details";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Timber.e("in onCreate");
+        Timber.e("savedInstanceState is null? %s", savedInstanceState == null);
         super.onCreate(savedInstanceState);
-        /* Need to add the fragment programmatically in this constructor */
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_movie_details);
 
         /* Critical to start the Fragment */
         if (savedInstanceState == null) {
 
             // Get a detail fragment in the container through a fragment transaction
             Bundle arguments = new Bundle();
-            arguments.putParcelable(DetailActivityFragment.DETAIL_URI, getIntent().getData());
-
-            DetailActivityFragment dAF = new DetailActivityFragment();
-            dAF.setArguments(arguments);
+            arguments.putParcelable(MovieDetailsFragment.ARG_MOVIE_DETAILS,
+                    getIntent().getParcelableExtra(MOVIE_ITEM));
+            MovieDetailsFragment movieDetailsFragment = new MovieDetailsFragment();
+            movieDetailsFragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_detail_container, dAF)
+                    .replace(R.id.movie_details_container, movieDetailsFragment, MOVIE_DETAILS_FRAGMENT_TAG)
                     .commit();
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
-        setSupportActionBar(toolbar);
+        if (mToolbar != null) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                mToolbar.setNavigationOnClickListener(view -> finishAfterTransition());
+//            } else {
+//                mToolbar.setNavigationOnClickListener(view -> finish());
+//            }
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
+            // Get the support Action Bar
+            ActionBar actionBar = getSupportActionBar();
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present
-        getMenuInflater().inflate(R.menu.menu_detail, menu);
-
-        // Return true to display Menu
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will automatically
-        // handle clicks on the Home/Up button, so long as you specify a parent Activity
-        // in AndroidManifest.xml
-
-        int id = item.getItemId();
-
-        // no Inspection Simplifiable If-Statement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+            if (actionBar != null) {
+                actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
         }
-        return super.onOptionsItemSelected(item);
     }
+
+    /* Provides up navigation to the same instance of the Parent Activity, with its state intact */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        switch(menuItem.getItemId()){
+            // Respond to action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpTo(this,
+                        NavUtils.getParentActivityIntent(this).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
 }

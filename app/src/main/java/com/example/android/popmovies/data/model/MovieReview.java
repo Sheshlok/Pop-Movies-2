@@ -5,10 +5,13 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by sheshloksamal on 12/03/16.
  * Implementing Parcelable as a good practice. We will be persisting data later in SQLite DB and
- * retrieving it later through Loaders
+ * retrieving it, both via our repository
  */
 public class MovieReview implements Parcelable {
 
@@ -17,45 +20,51 @@ public class MovieReview implements Parcelable {
     @SerializedName("content") private String mContent;
     @SerializedName("url") private String mReviewUrl;
 
+    public MovieReview() {}
+
     public String getId(){
         return this.mReviewId;
     }
 
-    public void setId(String id){
+    public MovieReview setId(String id){
         this.mReviewId = id;
+        return this;
     }
 
     public String getAuthor(){
         return this.mAuthor;
     }
 
-    public void setAuthor(String author){
+    public MovieReview setAuthor(String author){
         this.mAuthor = author;
+        return this;
     }
 
     public String getContent(){
         return this.mContent;
     }
 
-    public void setContent(String content){
+    public MovieReview setContent(String content){
         this.mContent = content;
+        return this;
     }
 
     public String getUrl(){
         return this.mReviewUrl;
     }
 
-    public void setUrl(String url){
+    public MovieReview setUrl(String url){
         this.mReviewUrl = url;
+        return this;
     }
 
-    public String toString() {
-        return (this.mReviewId + " -- " + this.mAuthor + " -- " + this.mContent + " -- " + this.mReviewUrl);
+    @Override
+    public String toString(){
+        return "Review{Author: " + this.mAuthor + "}";
     }
 
-    // --------------------------------------------------------------------------------------------
 
-    private MovieReview(Parcel in) {
+    protected MovieReview(Parcel in) {
         this.mReviewId = in.readString();
         this.mAuthor = in.readString();
         this.mContent = in.readString();
@@ -87,4 +96,10 @@ public class MovieReview implements Parcelable {
         }
 
     };
+
+    // ---------------------Wrapper Class for Retrofit to parse API response ----------------------
+
+    public static class Response {
+        @SerializedName("results") public List<MovieReview> movieReviews = new ArrayList<>();
+    }
 }

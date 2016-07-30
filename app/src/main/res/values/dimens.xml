@@ -3,4 +3,16 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <!-- Browse MovieEntry -->
+    <item name="movie_image_aspect_ratio" format="float" type="dimen">.667</item>
+
+    <!-- Movie Details -->
+    <item name="movie_background_cover_aspect_ratio" format="float" type="dimen">1.779</item>
+
+    <!-- Toolbar-->
+    <dimen name="toolbar_elevation">4dp</dimen>
+
+    <!-- Favorite button elevation -->
+    <dimen name="favorite_button_elevation">6dp</dimen>
 </resources>

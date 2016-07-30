@@ -1,22 +1,10 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/movie_list_fragment"
-    android:name="com.example.android.popmovies.ui.fragment.SortedByMoviesFragment"
+    android:id="@+id/movies_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.fragment.SortedByMoviesFragment"
-    tools:layout="@layout/fragment_main" />
+    tools:ignore="MergeRootFrame"
+    tools:layout="@layout/fragment_movies" />
 
-<!-- android:name attribute in the fragment specifies the Fragment Class to instantiate in the
-layout. Or, in other words, an activity's layout XML can include <fragment> tag to embed fragment
-instances in the layout. The layout is installed in the activity in the normal way using
-setContentView(...) -->
-
-<!-- Each fragment requires a unique identifier that the system can use to restore the fragment if
-the activity is restarted (and which we can use to capture the fragment to perform fragment
-transactions, such as remove it). There are 3 ways to provide id for the fragment.
-1. Supply the android:id attribute with a unique id.
-2. Supply the android:tag attribute with a unique tag.
-3. If you provide neither of the above two, the system uses the ID of the containerView. -->

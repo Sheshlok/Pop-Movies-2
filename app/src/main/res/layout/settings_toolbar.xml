@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-</LinearLayout>
+<!-- By design importing the toolbar does not allow for elevation and
+    shadowing in pre-V21 devices. In order to have elevation and shadowing
+    on Toolbar, we need to wrap it in a AppBarLayout -->
+<android.support.design.widget.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settings_appbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ui.activity.SettingsActivity">
+
+    <include layout="@layout/toolbar"/>
+
+</android.support.design.widget.AppBarLayout>

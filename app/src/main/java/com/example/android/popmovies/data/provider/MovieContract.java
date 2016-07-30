@@ -2,6 +2,7 @@ package com.example.android.popmovies.data.provider;
 
 /**
  * Created by sheshloksamal on 12/03/16.
+ *
  */
 
 import android.content.ContentResolver;
@@ -20,10 +21,9 @@ public class MovieContract {
     /* Base of all URIs which app will use to contact the content provider */
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    /* Possible paths. We will have 3 tables - movies, reviews, trailers */
+    /* Possible paths. We will have 2 tables - movies, genres */
     public static final String PATH_MOVIE = "movies";
-    public static final String PATH_REVIEW = "reviews";
-    public static final String PATH_TRAILER = "trailers";
+    public static final String PATH_GENRES = "genres";
 
     /* Inner Class that defines the table contents of 'movie' table */
     public static final class MovieEntry implements BaseColumns {
@@ -38,6 +38,9 @@ public class MovieContract {
         // vnd.android.cursor.item/com.example.android.popmovies/movies
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" +
                 CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+
+        // Default "ORDER BY" clause for favorites page should be descending
+        public static final String DEFAULT_SORT = BaseColumns._ID + " DESC";
 
         // content://com.example.android.popmovies/movies/{id}
         public static Uri buildmovieUriWithId(long id) {
@@ -56,15 +59,18 @@ public class MovieContract {
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_MOVIE_TITLE = "title";
         public static final String COLUMN_MOVIE_POSTER_PATH = "poster_path";
+        public static final String COLUMN_MOVIE_BACKDROP_PATH = "backdrop_path";
         public static final String COLUMN_MOVIE_SYNOPSIS = "synopsis";
         public static final String COLUMN_MOVIE_USER_RATING = "user_rating";
         public static final String COLUMN_MOVIE_RELEASE_DATE = "release_date";
+        public static final String COLUMN_MOVIE_FAVORED = "favored";
+        public static final String COLUMN_MOVIE_GENRE_IDS = "genre_ids"; // Comma-separated list of genreIds
 
         /*
             Helper URIs for movieIDs
          */
 
-        // content://com.example.android.popmovies/movie_id
+        // content://com.example.android.popmovies/movies/movie_id
         public static Uri buildMovieUriWithMovieId(String movieId) {
             return CONTENT_URI.buildUpon().appendPath(movieId).build();
         }
@@ -75,22 +81,23 @@ public class MovieContract {
         }
     }
 
-    /* Inner Class that defines the table contents of the 'reviews' table */
-    public static final class ReviewEntry implements BaseColumns {
 
-        // content://com.example.android.popmovies/reviews
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_REVIEW).build();
+    /* Inner Class that defines the table contents of the 'genres' table */
+    public static final class GenreEntry implements BaseColumns {
 
-        // vnd.android.cursor.dir/com.example.android.popmovies/reviews
+        // content://com.example.android.popmovies/genres
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_GENRES).build();
+
+        // vnd.android.cursor.dir/com.example.android.popmovies/genres
         public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
-                CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+                CONTENT_AUTHORITY + "/" + PATH_GENRES;
 
-        // vnd.android.cursor.item/com.example.android.popmovies/reviews
+        // vnd.android.cursor.item/com.example.android.popmovies/genres
         public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" +
-                CONTENT_AUTHORITY + "/" + PATH_REVIEW;
+                CONTENT_AUTHORITY + "/" + PATH_GENRES;
 
-        // content://com.example.android.popmovies/reviews/{id}
-        public static Uri buildReviewWithId(long id) {
+        // content://com.example.android.popmovies/genres/{id}
+        public static Uri buildGenreWithId(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -99,75 +106,27 @@ public class MovieContract {
             TABLE DETAILS
          */
 
-        public static final String TABLE_NAME = "reviews";
+        public static final String TABLE_NAME = "genres";
 
         // Table Columns
-        public static final String COLUMN_REVIEW_ID = "review_id";
-        public static final String COLUMN_REVIEW_AUTHOR = "author";
-        public static final String COLUMN_REVIEW_CONTENT = "content";
-        public static final String COLUMN_REVIEW_URL = "review_url";
-        // Column with foreign key from the movie table for INNER JOIN later
-        public static final String COLUMN_MOVIE_KEY = "movie_id";
+        public static final String COLUMN_GENRE_ID = "genre_id";
+        public static final String COLUMN_GENRE_NAME = "genre_name";
 
         /*
-            Helper URIs for movieIDs
+            Helper URIs for GenreIDs
          */
-        // content://com.example.android.popmovies/reviews/movie_id:
-        public static Uri buildReviewUriWithMovieId(String movieId) {
-            return CONTENT_URI.buildUpon().appendPath(movieId).build();
+
+        // content://com.example.android.popmovies/genres/genre_id
+        public static Uri buildGenreUriWithGenreId(int genreId) {
+            return CONTENT_URI.buildUpon().appendPath(Integer.toString(genreId)).build();
         }
 
-        // will return movie_id
-        public static String getMovieIdFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+        // will return genreId
+        public static int getGenreIdFromUri(Uri uri) {
+            return Integer.parseInt(uri.getPathSegments().get(1));
         }
 
     }
 
-    /* Inner Class that defines the table contents of the 'trailers' table */
-    public static final class TrailerEntry implements BaseColumns {
 
-        // content://com.example.android.popmovies/trailers
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TRAILER).build();
-
-        // vnd.android.cursor.dir/com.example.android.popmovies/trailers
-        public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" +
-                CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-
-        // vnd.android.cursor.item/com.example.android.popmovies/trailers
-        public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" +
-                CONTENT_AUTHORITY + "/" + PATH_TRAILER;
-
-        // content://com.example.android.popmovies/trailers/{id}
-        public static Uri buildTrailerWithId(long id) {
-            return ContentUris.withAppendedId(CONTENT_URI, id);
-        }
-
-        /*
-            TABLE DETAILS
-         */
-        public static final String TABLE_NAME = "trailers";
-
-        public static final String COLUMN_TRAILER_ID = "trailer_id";
-        public static final String COLUMN_TRAILER_KEY = "youtube_key";
-        public static final String COLUMN_TRAILER_NAME = "trailer_name";
-        public static final String COLUMN_TRAILER_SITE = "site";
-        public static final String COLUMN_TRAILER_SIZE = "size";
-        // Column with foreign key from movie table for INNER JOIN later
-        public static final String COLUMN_MOVIE_KEY = "movie_id";
-
-        /*
-            Helper URIs for movieIds
-         */
-
-        // content://com.example.android.popmovies/trailers/movie_id
-        public static Uri buildTrailerUriWithMovieId(String movieId) {
-            return CONTENT_URI.buildUpon().appendPath(movieId).build();
-        }
-
-        // will return movie_id
-        public static String getMovieIdFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
-        }
-    }
 }

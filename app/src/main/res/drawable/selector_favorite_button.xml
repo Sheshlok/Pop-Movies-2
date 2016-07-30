@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-
+    <item android:state_pressed="true"
+        android:drawable="@drawable/ic_favorite_button_heart_border_white_24dp"/>
+    <item android:state_activated="true"
+        android:drawable="@drawable/ic_favorite_button_heart_white_24dp"/>
+    <item android:state_selected="true"
+        android:drawable="@drawable/ic_favorite_button_heart_white_24dp"/>
+    <!-- Default -->
+    <item android:drawable="@drawable/ic_favorite_button_heart_border_white_24dp"/>
 </selector>

@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <declare-styleable name="FixedAspectRatioImageView">
+        <attr name="aspectRatio" format="dimension"/>
+        <attr name="aspectRatioEnabled" format="boolean"/>
+    </declare-styleable>
+</resources>

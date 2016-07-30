@@ -8,91 +8,108 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.test.AndroidTestCase;
 
+import com.example.android.popmovies.data.model.Genre;
+import com.example.android.popmovies.data.model.MovieItem;
+import com.example.android.popmovies.data.provider.MovieContract;
+import com.example.android.popmovies.utilities.DbUtils;
 import com.example.android.popmovies.utils.PollingCheck;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Created by sheshloksamal on 13/03/16.
+ *
  */
 public class TestUtilities extends AndroidTestCase {
-
 
     static void validateCurrentRecord(String error, Cursor valueCursor, ContentValues expectedValues) {
         /*
             Set is a data structure that does not allow duplicate elements.
             Map.Entry is a K:V pair mapping contained in a Map.
-            ContentValues.valueSet() returns a Set of all keys and values Set<Map.Entry<String, Object>>
+            ContentValues.valueSet() returns a Set of all keys and values 'Set<Map.Entry<String, Object>>'
          */
 
         Set<Map.Entry<String, Object>> valueSet = expectedValues.valueSet();
         for (Map.Entry<String, Object> entry: valueSet) {
             String columnName = entry.getKey();
             int index = valueCursor.getColumnIndex(columnName);
-            assertTrue("Column" + columnName + "Not Found" + error, index != -1);
+            assertTrue("Column " + columnName + " Not Found" + error, index != -1);
             String expectedValue = entry.getValue().toString();
-            assertEquals("The expected Value" + expectedValue + "does" +
-                    "not match the actual returned Value" + valueCursor.getString(index) + error,
-                   expectedValue, valueCursor.getString(index));
+            if (!columnName.equals(MovieContract.MovieEntry.COLUMN_MOVIE_FAVORED)) {
+                assertEquals("The expected Value " + expectedValue + " does" +
+                        "not match the actual returned Value " + DbUtils.getString(valueCursor, columnName)
+                        + " " + error, expectedValue, DbUtils.getString(valueCursor, columnName));
+            } else {
+                assertEquals("The expected Value " + expectedValue + " does" +
+                        "not match the actual returned Value " + DbUtils.getBoolean(valueCursor, columnName)
+                        + " " + error, expectedValue, String.valueOf(DbUtils.getBoolean(valueCursor, columnName)));
+            }
         }
 
-    }
 
+    }
 
     static ContentValues createMovieEntryValues() {
+        // Not setting favored here since the default value is false both in model and in db schema
+        MovieItem testMovie = new MovieItem()
+                .setMovieId("293660")
+                .setTitle("Deadpool")
+                .setPosterPath("/inVq3FRqcYIRl2la8iZikYYxFNR.jpg")
+                .setBackdropPath("/n1y094tVDFATSzkTnFxoGZ1qNsG.jpg")
+                .setSynopsis("Based upon Marvel Comics’ most unconventional anti-hero, DEADPOOL " +
+                        "tells the origin story of former Special Forces operative turned " +
+                        "mercenary Wade Wilson, who after being subjected to a rogue experiment " +
+                        "that leaves him with accelerated healing powers, adopts the alter ego " +
+                        "Deadpool. Armed with his new abilities and a dark, twisted sense of " +
+                        "humor, Deadpool hunts down the man who nearly destroyed his life.")
+                .setUserRating("7.23")
+                .setReleaseDate("2016-02-09")
+                .setGenreIds(Arrays.asList(28, 12, 35));
 
-        ContentValues movieEntryValues = new ContentValues();
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, "293660");
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, "Deadpool");
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH,
-                "/inVq3FRqcYIRl2la8iZikYYxFNR.jpg");
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_SYNOPSIS,
-                "Based upon Marvel Comics’ most unconventional anti-hero, DEADPOOL tells the origin" +
-                        " story of former Special Forces operative turned mercenary Wade Wilson, " +
-                        "who after being subjected to a rogue experiment that leaves him with " +
-                        "accelerated healing powers, adopts the alter ego Deadpool. Armed with his " +
-                        "new abilities and a dark, twisted sense of humor, Deadpool hunts down the " +
-                        "man who nearly destroyed his life.");
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_USER_RATING, "7.23");
-        movieEntryValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, "2016-02-09");
-        return movieEntryValues;
+        return new MovieItem.Builder().movieItem(testMovie).build();
     }
 
 
 
-    static ContentValues createReviewEntryValues(String movieId) {
+    static ContentValues createGenreEntryValues() {
+        Genre testGenre = new Genre()
+                .setId(28)
+                .setName("Action");
 
-        ContentValues reviewEntryValues = new ContentValues();
-        reviewEntryValues.put(MovieContract.ReviewEntry.COLUMN_MOVIE_KEY, movieId);
-        reviewEntryValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_ID, "56c146cac3a36817f900d5f0");
-        reviewEntryValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_AUTHOR, "huy.duc.eastagile");
-        reviewEntryValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_CONTENT, "A funny movie with a " +
-                "romantic love story. Wade Wilson (Ryan Reynolds) is a former Special Forces " +
-                "operative who now works as a mercenary. His world comes crashing down when " +
-                "evil scientist Ajax (Ed Skrein) tortures, disfigures and transforms him into" +
-                " Deadpool. The rogue experiment leaves Deadpool with accelerated healing powers" +
-                " and a twisted sense of humor. With help from mutant allies Colossus and" +
-                " Negasonic Teenage Warhead (Brianna Hildebrand), Deadpool uses his new skills" +
-                " to hunt down the man who nearly destroyed his life.");
-        reviewEntryValues.put(MovieContract.ReviewEntry.COLUMN_REVIEW_URL,
-                "https://www.themoviedb.org/review/56c146cac3a36817f900d5f0");
-
-        return reviewEntryValues;
+        return new Genre.Builder().genre(testGenre).build();
 
     }
 
-    static ContentValues createTrailerEntryValues(String movieId) {
+    /* Putting the current genre list in testBulkInsertGenreValues */
+    static ContentValues[] createBulkInsertGenreValues() {
+        List<ContentValues> testBulkInsertGenreValues = new ArrayList<>();
+        testBulkInsertGenreValues.add(new Genre.Builder().id(28).name("Action").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(12).name("Adventure").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(16).name("Animation").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(35).name("Comedy").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(80).name("Crime").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(99).name("Documentary").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(18).name("Drama").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10751).name("Family").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(14).name("Fantasy").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10769).name("Foreign").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(36).name("History").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(27).name("Horror").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10402).name("Music").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(9648).name("Mystery").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10749).name("Romance").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(878).name("Science Fiction").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10770).name("TV Movie").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(53).name("Thriller").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(10752).name("War").build());
+        testBulkInsertGenreValues.add(new Genre.Builder().id(37).name("Western").build());
 
-        ContentValues trailerEntryValues = new ContentValues();
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_MOVIE_KEY, movieId);
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_ID, "56c4cb4bc3a3680d57000560");
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_KEY, "7jIBCiYg58k");
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_NAME, "Trailer");
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_SITE, "YouTube");
-        trailerEntryValues.put(MovieContract.TrailerEntry.COLUMN_TRAILER_SIZE, "1080");
+        return testBulkInsertGenreValues.toArray(new ContentValues[testBulkInsertGenreValues.size()]);
 
-        return trailerEntryValues;
     }
 
     /*
