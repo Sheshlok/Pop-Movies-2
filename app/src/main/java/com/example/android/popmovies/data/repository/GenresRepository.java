@@ -25,6 +25,7 @@ import java.util.Map;
 
 import rx.Observable;
 
+
 /**
  * Created by sheshloksamal on 30/03/16.
  * An interface which activities and fragments can use to get data as needed without

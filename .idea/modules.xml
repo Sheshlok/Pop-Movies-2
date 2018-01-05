@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PopMovies Stage 1.iml" filepath="$PROJECT_DIR$/PopMovies Stage 1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PopMovies Stage 2.iml" filepath="$PROJECT_DIR$/PopMovies Stage 2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/third_party/bypass/bypass.iml" filepath="$PROJECT_DIR$/third_party/bypass/bypass.iml" />
     </modules>
   </component>
 </project>

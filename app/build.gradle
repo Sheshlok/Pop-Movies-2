@@ -1,3 +1,5 @@
+import com.android.build.OutputFile
+
 /*
  *  Copyright (C) 2016 Sheshlok Samal
  *
@@ -17,19 +19,16 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.fernandocejas.frodo'
 apply plugin: 'com.jakewharton.hugo'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 26
 
     defaultConfig {
-        applicationId "comexample.android.popmovies"
-        minSdkVersion 10
-        targetSdkVersion 24
+        applicationId "com.example.android.popmovies"
+        minSdkVersion 14 // Replacing 10 as support library version 26.1.0 has minSDK of 14
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0.0"
 
@@ -55,7 +54,7 @@ android {
         variant.outputs.each { output ->
             output.versionCodeOverride =
                     project.ext.versionCodes.get(output.getFilter(
-                            com.android.build.OutputFile.ABI), 0) * 1000000 + defaultConfig.versionCode
+                            OutputFile.ABI), 0) * 1000000 + defaultConfig.versionCode
         }
     }
 
@@ -86,46 +85,44 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 
-    // Material Design libraries for compatibility up-to version7
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:support-v4:24.1.1'
-    compile 'com.android.support:design:24.1.1'
-    compile 'com.android.support:cardview-v7:24.1.1'
-    compile 'com.android.support:palette-v7:24.1.1'
+    // Material Design libraries for compatibility
+    compile 'com.android.support:appcompat-v7:26.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
+    compile 'com.android.support:palette-v7:26.1.0'
 
     // Glide: Image Handling library
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.android.support:support-v4:24.1.1'
     compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
 
     // Retrofit & OkHttp: Networking Library
-    compile 'com.squareup.retrofit2:retrofit:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
 
     // Stetho: A simple debug bridge for Android
-    debugCompile 'com.facebook.stetho:stetho:1.3.1'
-    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.3.1'
+    debugCompile 'com.facebook.stetho:stetho:1.5.0'
+    debugCompile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
     // ButterKnife: Field and Method binding for Android Views
-    compile 'com.jakewharton:butterknife:8.1.0'
-    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Dagger 2: A DI framework to modularize the code
-    apt 'com.google.dagger:dagger-compiler:2.5'
-    compile 'com.google.dagger:dagger:2.5'
-    provided 'javax.annotation:jsr250-api:1.0'
+    compile 'com.google.dagger:dagger:2.0.2'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.0.2'
 
     // RxAndroid: Simplifying API calls, wrapper classes for models, and making app reactive !!!
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.7'
 
     // Timber: A more useful Android Logging API
-    compile 'com.jakewharton.timber:timber:4.1.2'
+    compile 'com.jakewharton.timber:timber:4.6.0'
 
     // SQLBrite: A light-weight wrapper around SQLiteOpenHelper and ContentResolver which introduces
     // reactive stream semantics to queries
-    compile 'com.squareup.sqlbrite:sqlbrite:0.6.3'
+    compile 'com.squareup.sqlbrite:sqlbrite:0.6.2'
 
     // LeakCanary: A memory detection library for Android and Java.
     // "A small leak will sink a great ship" - Benjamin Franklin
@@ -142,7 +139,7 @@ dependencies {
     // Android Device Shake Detection: Just for fun. Refresh movie list when device is shaken
     compile 'com.squareup:seismic:1.0.2'
 
-    compile project(':bypass')
+    implementation project(':bypass')
 
 
 }

@@ -26,6 +26,7 @@ import java.util.List;
 
 import rx.Observable;
 
+
 /**
  * Created by sheshloksamal on 20/03/16.
  * An interface which activities and fragments can use to get/store data as needed without
@@ -35,7 +36,7 @@ import rx.Observable;
  */
 public interface MoviesRepository {
 
-    Observable<List<MovieItem>> getMoviesFromApiWithSavedDataAndGenreNames(String sortPreference, int page);
+   Observable<List<MovieItem>> getMoviesFromApiWithSavedDataAndGenreNames(String sortPreference, int page);
 
     Observable<List<MovieReview>> getMovieReviews(String movieId);
 

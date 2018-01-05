@@ -33,6 +33,7 @@ import java.util.Map;
 
 import rx.functions.Func1;
 
+
 /**
  * Created by sheshloksamal on 30/03/16.
  * * @see  <a href="https://github.com/square/sqlbrite/blob/master/sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fexample%2Fsqlbrite%2Ftodo%2Fdb%2FTodoItem.java">

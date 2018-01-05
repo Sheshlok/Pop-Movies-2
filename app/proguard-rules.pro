@@ -32,6 +32,5 @@
 
 # OkHttp3 Proguard Rules
 -dontwarn okio.*
-
 #rxjava
 -dontwarn sun.misc.Unsafe
