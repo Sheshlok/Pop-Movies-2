@@ -123,14 +123,14 @@ dependencies {
     // SQLBrite: A light-weight wrapper around SQLiteOpenHelper and ContentResolver which introduces
     // reactive stream semantics to queries
     compile 'com.squareup.sqlbrite:sqlbrite:0.6.2'
-
-    // LeakCanary: A memory detection library for Android and Java.
-    // "A small leak will sink a great ship" - Benjamin Franklin
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+//    // LeakCanary: A memory detection library for Android and Java.
+//    // "A small leak will sink a great ship" - Benjamin Franklin
+//    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+//    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+//    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
 
     // GlidePalette
+    // Glide palette for extracting out prominent colors
     compile 'com.github.florent37:glidepalette:1.0.6'
 
     // Library to observe scroll events on scroll views. Helps in collapsing toolbars in a fragment for e.g.

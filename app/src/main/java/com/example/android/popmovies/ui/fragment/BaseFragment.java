@@ -28,7 +28,6 @@ import android.widget.Toast;
 import com.example.android.popmovies.PopularMoviesApplication;
 import com.example.android.popmovies.data.repository.GenresRepository;
 import com.example.android.popmovies.data.repository.MoviesRepository;
-import com.squareup.leakcanary.RefWatcher;
 
 import javax.inject.Inject;
 
@@ -81,8 +80,8 @@ public abstract class BaseFragment extends Fragment {
     @CallSuper @Override
     public void onDestroy() {
         super.onDestroy();
-        RefWatcher refWatcher = PopularMoviesApplication.getRefWatcher(getActivity());
-        refWatcher.watch(this);
+//        RefWatcher refWatcher = PopularMoviesApplication.getRefWatcher(getActivity());
+//        refWatcher.watch(this);
     }
 
     protected void showToast(String message) {

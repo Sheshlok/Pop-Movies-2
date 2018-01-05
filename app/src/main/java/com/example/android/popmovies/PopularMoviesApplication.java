@@ -19,11 +19,8 @@
 package com.example.android.popmovies;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.example.android.popmovies.data.DataModule;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 
 import timber.log.Timber;
 
@@ -34,7 +31,7 @@ import timber.log.Timber;
 public class PopularMoviesApplication extends Application {
 
     private ApplicationComponent component;
-    private RefWatcher refWatcher;
+//    private RefWatcher refWatcher;
 
     @Override
     public void onCreate() {
@@ -48,13 +45,13 @@ public class PopularMoviesApplication extends Application {
             Timber.plant(new Timber.DebugTree());
         }
 
-        refWatcher = LeakCanary.install(this);
+//        refWatcher = LeakCanary.install(this);
     }
 
-    public static RefWatcher getRefWatcher(Context context) {
-        PopularMoviesApplication application = (PopularMoviesApplication) context.getApplicationContext();
-        return application.refWatcher;
-    }
+//    public static RefWatcher getRefWatcher(Context context) {
+//        PopularMoviesApplication application = (PopularMoviesApplication) context.getApplicationContext();
+//        return application.refWatcher;
+//    }
 
     public ApplicationComponent getComponent(){
         return component;
