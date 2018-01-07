@@ -29,7 +29,7 @@ import android.text.style.URLSpan;
  *
  * Derived from http://stackoverflow.com/a/20905824.
  */
-public class TouchableUrlSpan extends URLSpan {
+public class TouchableURLSpan extends URLSpan {
 
     private static int[] STATE_PRESSED = new int[]{android.R.attr.state_pressed};
     private boolean isPressed;
@@ -37,7 +37,7 @@ public class TouchableUrlSpan extends URLSpan {
     private int pressedTextColor;
     private int pressedBackgroundColor;
 
-    public TouchableUrlSpan(String url,
+    public TouchableURLSpan(String url,
                             ColorStateList textColor,
                             int pressedBackgroundColor) {
         super(url);
