@@ -37,31 +37,63 @@ android {
     }
 
     splits {
+        // Configures multiple APKs based on ABI
         abi {
+            // Enables building multiple APKs per ABI
             enable true
+
+            // By default all ABIs are included, so use reset() and include to specify that
+            // we only want APKs for x86, x86_64, armeabi-v7a, arm64-v8a and mips
+
+            // Resets the list of ABIs that Gradle should create APKs for
             reset()
-            include 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
-            universalApk true
+
+            // Specifies the list of ABIs that Gradle should create APKs for
+            include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+
+            // If true, Gradle generates universalAPK containing code and resources for all ABIs in
+            // a single APK. Here, it specifies that we don't want to also generate a universal APK
+            // that includes all ABIs
+            universalApk false
         }
     }
 
-    // map for the version code
-    project.ext.versionCodes = ['armeabi': 1, 'armeabi-v7a': 2, 'arm64-v8a': 3, 'mips': 5,
-                                'mips64': 6, 'x86': 8, 'x86_64': 9]
+    // map for the version code that gives each ABI a value
+    project.ext.abiCodes = [armeabi: 1, 'armeabi-v7a': 2, 'arm64-v8a': 3, mips: 5,
+                            mips64: 6, x86: 8, x86_64: 9]
 
-    applicationVariants.all { variant ->
-        // assign different version code for each output
+    // For each APK output variant, override versionCode with a combination of ext.abiCodes * 10000 +
+    // variant.versionCode. Here, variant.versionCode is equal to defaultConfig.versionCode. If
+    // you define product flavors that define their own versionCode, variant.versionCode uses that
+    // value instead
+    android.applicationVariants.all { variant ->
+
+        // Assigns a different version code for each output APK other than the universal APK
         variant.outputs.each { output ->
-            output.versionCodeOverride =
-                    project.ext.versionCodes.get(output.getFilter(
-                            OutputFile.ABI), 0) * 1000000 + defaultConfig.versionCode
+
+            // Stores the value of ext.abiCodes that is associated with the ABI for this variant
+            def baseAbiVersionCode =
+                    // Determine the ABI for this variant and returns the mapped value
+                    project.ext.abiCodes.get(output.getFilter(OutputFile.ABI))
+
+            // Because abiCodes.get() returns null for ABIs that are not mapped by ext.abiCodes ,
+            // the following code does not override the version code for universal APKs. However, because
+            // we want the universal APKs to have the lowest version code, this outcome is desirable
+            if (baseAbiVersionCode != null) {
+
+                // Assign the new version code to versionCodeOverride, which changes the version code
+                // for only output APK, not for the variant itself. Skipping this step simply causes
+                // Gradle to use the value of variant.versionCode for each APK
+                output.versionCodeOverride = baseAbiVersionCode * 1000 + variant.versionCode
+            }
         }
     }
+
 
     buildTypes {
         debug {
             applicationIdSuffix ".debug"
-            versionNameSuffix "-debug"
+            debuggable true
         }
 
         release {
