@@ -42,9 +42,9 @@ public interface TmdbApi {
 
     /** Send a GET request for movieList */
 
-    @GET("discover/movie?api_key=" + BuildConfig.TMDB_API_KEY)
+    @GET("movie/{sort_by}?api_key=" + BuildConfig.TMDB_API_KEY)
     Observable<MovieItem.Response> getMovies(
-            @Query("sort_by") String sortPreference,
+            @Path("sort_by") String sortPreference,
             @Query("page") int page
     );
 

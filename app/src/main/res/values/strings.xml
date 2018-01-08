@@ -48,15 +48,15 @@
     <!-- Sort By preference -->
     <string name="pref_sort_by_key" translatable="false">sortKey</string>
     <string name="pref_sort_by_label">Sort By</string>
-    <string name="pref_sort_by_default">popularity.desc</string>
+    <string name="pref_sort_by_default">popular</string>
     <string-array name="pref_sort_by_entries">
         <item>Most Popular</item>
         <item>Highest Rated</item>
         <item>Favorite Movies</item>
     </string-array>
     <string-array name="pref_sort_by_values">
-        <item>popularity.desc</item>
-        <item>vote_average.desc</item>
+        <item>popular</item>
+        <item>top_rated</item>
         <item>favorites</item>
     </string-array>
 

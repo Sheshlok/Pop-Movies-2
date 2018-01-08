@@ -86,7 +86,7 @@ public class PopMoviesSyncAdapter extends AbstractThreadedSyncAdapter {
     @Inject MoviesRepository mMoviesRepository;
 
     private static final String FAVORITES_MODE = "favorites";
-    private static final String POPULARITY_MODE = "popularity.desc";
+    private static final String POPULARITY_MODE = "popular";
     private static final int MOVIES_NOTIFICATION_ID = 1123;
 
     public static int SYNC_INTERVAL; // For versions lower than KitKat
